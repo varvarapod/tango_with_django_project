@@ -1,0 +1,44 @@
+from django import forms
+from rango.models import Page,Category
+
+class CategoryForm(forms.ModelForm):
+    name = forms.CharField(max_length=Category.NAME_MAX_LENGTH, help_text="Please enter the category name.")
+    views =forms.IntegerField(widget=forms.HiddenInput(),initial=0)
+    likes =forms.IntegerField(widget=forms.HiddenInput(),initial=0)
+    slug =forms.CharField(widget=forms.HiddenInput(),required=False)
+
+     #An inline class toprovide additionalinformationontheform.
+    class Meta:
+        #Providean association between theModelFormandamodel
+        model=Category
+        fields =('name',)
+
+class PageForm(forms.ModelForm):
+    title = forms.CharField(max_length=Page.TITLE_MAX_LENGTH, help_text="Please enter the title of the page.")
+    url =forms.URLField(max_length=200,
+    help_text="Please enter the URL of the page.")
+    views =forms.IntegerField(widget=forms.HiddenInput(),initial=0)
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+
+        url = cleaned_data.get('url')
+        # If url is not empty and doesn't start with 'http://',
+        # then prepend 'http://'.
+        if url and not url.startswith('http://'):
+            url = f'http://{url}'
+            cleaned_data['url'] = url
+        return cleaned_data
+
+    class Meta:
+         #Providean association between theModelFormandamodel
+        model=Page
+
+        #Whatfieldsdowewant to includeinourform?
+        #Thiswaywedon'tneed everyfieldinthemodelpresent.
+        #Somefieldsmayallow NULL values;wemaynotwanttoincludethem.
+        #Here, weare hiding theforeignkey.
+        #we can eitherexclude the categoryfieldfromtheform,
+        exclude= ('category',)
+        #or specify thefields toinclude(don'tincludethecategoryfield).
+        #fields=('title','url','views')
