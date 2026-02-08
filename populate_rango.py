@@ -1,5 +1,4 @@
 import os
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE',
                       'tango_with_django_project.settings')
 
@@ -7,34 +6,32 @@ import django
 django.setup()
 from rango.models import Category, Page
 
-def populate():
-    # First,we willcreatelists of dictionariescontainingthepages
-    # we wanttoaddintoeach category.
-    # Then wewill createadictionaryof dictionariesforourcategories.
-    # This mightseem alittle bitconfusing,butitallowsustoiterate
-    # througheach datastructure,andaddthedatatoourmodels.
 
+def populate():
+    # Страницы для категорий
     python_pages = [
-        {'title': 'OfficialPython Tutorial',
+        {'title': 'Official Python Tutorial',
          'url': 'http://docs.python.org/3/tutorial/',
          'views': 128},
-        {'title': 'HowtoThinklike aComputerScientist',
+        {'title': 'How to Think like a Computer Scientist',
          'url': 'http://www.greenteapress.com/thinkpython/',
          'views': 64},
-        {'title': 'LearnPythonin10 Minutes',
+        {'title': 'Learn Python in 10 Minutes',
          'url': 'http://www.korokithakis.net/tutorials/python/',
-         'views': 63},]
+         'views': 63},
+    ]
 
     django_pages = [
-        {'title': 'OfficialDjangoTutorial',
+        {'title': 'Official Django Tutorial',
          'url': 'https://docs.djangoproject.com/en/2.1/intro/tutorial01/',
          'views': 12},
-        {'title': 'DjangoRocks',
+        {'title': 'Django Rocks',
          'url': 'http://www.djangorocks.com/',
          'views': 79},
-        {'title': 'HowtoTangowith Django',
+        {'title': 'How to Tango with Django',
          'url': 'http://www.tangowithdjango.com/',
-         'views': 27},]
+         'views': 27},
+    ]
 
     other_pages = [
         {'title': 'Bottle',
@@ -42,26 +39,26 @@ def populate():
          'views': 1},
         {'title': 'Flask',
          'url': 'http://flask.pocoo.org',
-         'views': 41},]
+         'views': 41},
+    ]
 
-    cats = {'Python': {'pages': python_pages, 'views': 128, 'likes': 64},
-            'Django': {'pages': django_pages, 'views': 64, 'likes': 32},
-            'OtherFrameworks': {'pages': other_pages, 'views': 32, 'likes': 16}}
+    # Категории
+    cats = {
+        'Python': {'pages': python_pages, 'views': 128, 'likes': 64},
+        'Django': {'pages': django_pages, 'views': 64, 'likes': 32},
+        'Other Frameworks': {'pages': other_pages, 'views': 32, 'likes': 16},
+    }
 
-    # If youwanttoaddmorecategories orpages,
-    # addthem tothe dictionariesabove.
-
-    # Thecode belowgoesthrough the catsdictionary,thenaddseachcategory,
-    # andthen adds alltheassociatedpagesforthatcategory.
-    for cat, cat_data in cats.items():
-        c = add_cat(cat, cat_data['views'], cat_data['likes'])
+    # Добавление категорий и страниц
+    for cat_name, cat_data in cats.items():
+        c = add_cat(cat_name, cat_data['views'], cat_data['likes'])
         for p in cat_data['pages']:
             add_page(c, p['title'], p['url'], p['views'])
 
-    # Print out the categories we haveadded.
+    # Вывод всех категорий и страниц
     for c in Category.objects.all():
         for p in Page.objects.filter(category=c):
-            print(f'-{c}:{p}')
+            print(f'- {c}: {p}')
 
 
 def add_page(cat, title, url, views=0):
@@ -79,7 +76,8 @@ def add_cat(name, views=0, likes=0):
     c.save()
     return c
 
-# Start execution here!
+
+# Запуск скрипта
 if __name__ == '__main__':
     print('Starting Rango population script...')
     populate()
