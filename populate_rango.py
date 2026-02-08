@@ -8,7 +8,6 @@ from rango.models import Category, Page
 
 
 def populate():
-    # Страницы для категорий
     python_pages = [
         {'title': 'Official Python Tutorial',
          'url': 'http://docs.python.org/3/tutorial/',
@@ -42,20 +41,17 @@ def populate():
          'views': 41},
     ]
 
-    # Категории
     cats = {
         'Python': {'pages': python_pages, 'views': 128, 'likes': 64},
         'Django': {'pages': django_pages, 'views': 64, 'likes': 32},
         'Other Frameworks': {'pages': other_pages, 'views': 32, 'likes': 16},
     }
 
-    # Добавление категорий и страниц
     for cat_name, cat_data in cats.items():
         c = add_cat(cat_name, cat_data['views'], cat_data['likes'])
         for p in cat_data['pages']:
             add_page(c, p['title'], p['url'], p['views'])
 
-    # Вывод всех категорий и страниц
     for c in Category.objects.all():
         for p in Page.objects.filter(category=c):
             print(f'- {c}: {p}')
@@ -77,7 +73,6 @@ def add_cat(name, views=0, likes=0):
     return c
 
 
-# Запуск скрипта
 if __name__ == '__main__':
     print('Starting Rango population script...')
     populate()
